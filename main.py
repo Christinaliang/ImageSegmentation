@@ -11,7 +11,7 @@ args = parser.parse_args()
 K = args.cluster
 D = 3
 THRESH = args.thresh
-useType = np.float64
+useType = np.float
 
 def findCentroids(feats, centroids):
     N = feats.shape[0]
@@ -45,7 +45,10 @@ if __name__ == '__main__':
     while (True):
         idx = findCentroids(feats, centroids)
         for i in xrange(K):
-            newCentroids[i] = np.mean(feats[idx == i, :], axis=0)
+            tmp = feats[idx ==i]
+            if len(tmp) == 0 or (tmp is None):
+                tmp = centroids[i].copy()
+            newCentroids[i] = np.mean(tmp, axis=0)
 
         error = 0.0
         for i in xrange(K):
