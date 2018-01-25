@@ -6,6 +6,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--cluster', type=int, default=3)
 parser.add_argument('--thresh', type=float, default=1E-4)
 parser.add_argument('--input', type=str, default='image.jpg')
+parser.add_argument('--iter', type=int, default=20)
+parser.add_argument('--save', type=int, default=0)
 args = parser.parse_args()
 
 K = args.cluster
@@ -45,7 +47,7 @@ if __name__ == '__main__':
     while (True):
         idx = findCentroids(feats, centroids)
         for i in xrange(K):
-            tmp = feats[idx ==i]
+            tmp = feats[idx == i]
             if len(tmp) == 0 or (tmp is None):
                 tmp = centroids[i].copy()
             newCentroids[i] = np.mean(tmp, axis=0)
@@ -60,6 +62,8 @@ if __name__ == '__main__':
         if (error < THRESH):
             break
         centroids = newCentroids.copy()
+        if (ITER > args.iter):
+            break
 
     idx = findCentroids(feats, centroids)
     centroids = centroids * 256.0
@@ -69,6 +73,8 @@ if __name__ == '__main__':
             pix = centroids[idx[i][j]]
             img[i][j] = pix
 
+    if (args.save == 1):
+        cv2.imwrite('save%s' % args.input, img)
     cv2.imshow('Image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
